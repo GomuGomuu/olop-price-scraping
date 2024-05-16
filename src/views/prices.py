@@ -17,7 +17,7 @@ def make_key(*args, **kwargs):
             raise Exception(
                 "The request payload is missing the card_name or url parameter"
             )
-        return slugify(f"{card_name}-{card_url}")
+        return f"{CACHE_CARD_PRICE_KEY}_{hash(slugify(f'{card_name}_{card_url}'))}"
     except Exception as e:
         return str(e)
 
@@ -25,7 +25,6 @@ def make_key(*args, **kwargs):
 @app.route("/get_price", methods=["POST"])
 @cache.cached(
     timeout=BASE_REDIS_EXPIRATION,
-    key_prefix=CACHE_CARD_PRICE_KEY,
     make_cache_key=make_key,
 )
 def get_price():
