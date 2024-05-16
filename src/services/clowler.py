@@ -4,7 +4,7 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from src.constants import PRICE_COORDINATES, BROWSER_DIMENSIONS
+from src.constants import SELENIUM_PRICE_COORDINATES, SELENIUM_BROWSER_DIMENSIONS
 from src.services.ocr import TesseractService
 
 
@@ -22,8 +22,8 @@ class ALOPCardCrowler:
     def get_price_image(
         self,
         url: str = None,
-        crop_coordinates: str = PRICE_COORDINATES,
-        browser_dimensions=BROWSER_DIMENSIONS,
+        crop_coordinates: str = SELENIUM_PRICE_COORDINATES,
+        browser_dimensions=SELENIUM_BROWSER_DIMENSIONS,
     ):
         if url:
             self.driver.get(url)

@@ -1,41 +1,63 @@
-from flask import Flask, request, jsonify
+import logging
+import os
 
-from src.services.get_price_workflow import get_price_workflow
-from src.utils import slugify, extract_float_value
+from flask import Flask
+from redis import Redis
+from flask_caching import Cache
+
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+REDIS_DB = os.getenv("REDIS_DB", 0)
+
+REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
+CACHE_CARD_PRICE_KEY = "card_price"
+BASE_REDIS_EXPIRATION = 60 * 60 * 24
+
+config = {
+    "CACHE_TYPE": "redis",
+    "CACHE_REDIS_HOST": REDIS_HOST,
+    "CACHE_REDIS_PORT": REDIS_PORT,
+    "CACHE_REDIS_DB": REDIS_DB,
+    "CACHE_DEFAULT_TIMEOUT": 60 * 60 * 24,
+}
 
 app = Flask(__name__)
+app.config.from_mapping(config)
+cache = Cache(app=app)
+cache.init_app(app)
+redis = Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
+# Configure Flask logging
+app.logger.setLevel(logging.INFO)
+handler = logging.FileHandler("app.log")
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+
+# Importing the other views
+from src.views import *  # noqa
+
+
+def make_key(*args, **kwargs):
+    user_data = request.get_json()  # noqa: F405
+    return ",".join([f"{key}={value}" for key, value in user_data.items()])
 
 
 @app.route("/")
-def hello_world():  # put application's code here
-    return "Hello World!"
-
-
-@app.route("/get_price", methods=["POST"])
-def get_price():
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-            if url := data.get("url"):
-                card_name = data.get("card_name")
-                slug_name = slugify(card_name)
-                price = extract_float_value(get_price_workflow(url))
-
-                return {"price": price, "card_name": card_name, "card_slug": slug_name}
-
-            return jsonify(
-                {"error": "The request payload is missing the url parameter"}
-            )
-        else:
-            return jsonify({"error": "The request payload is not in JSON format"})
-    else:
-        return jsonify({"error": "The request method is not POST"})
+def index():
+    app.logger.info("This is an INFO message")
+    app.logger.debug("This is a DEBUG message")
+    app.logger.warning("This is a WARNING message")
+    app.logger.error("This is an ERROR message")
+    app.logger.critical("This is a CRITICAL message")
+    return "Hello, World!"
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(reloader=True, debug=True)
     # obj = {
-    #     "url": "https://www.ligaonepiece.com.br/?view=cards/card&card=Kouzuki+Oden+%28OP01-031-PAR%29&ed=OP-01&num=OP01-031-PAR",
+    #     "url": "https://www.ligaonepiece.com.br/?view=cards/card&card=Kouzuki+Oden+%28OP01-031-PAR%29&ed=OP-01&num=OP01-031-PAR",  # noqa
     #     "card_name": "Kouzuki Oden (OP01-031-PAR)"
     # }
     # price = get_price_workflow(obj["url"])
