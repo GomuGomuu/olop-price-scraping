@@ -1,7 +1,9 @@
-import os
-
 from constants import PRICE_COORDINATES
-from scraper.services import get_screen_shot, crop_image, download_card_image, init_driver
+from scraper.services import (
+    get_screen_shot,
+    crop_image,
+    init_driver,
+)
 from utils import str_to_slug
 
 if __name__ == "__main__":
@@ -32,6 +34,12 @@ if __name__ == "__main__":
             "url": "https://www.ligaonepiece.com.br/?view=cards/card&card=Vinsmoke+Reiju+%28042%29+%28Alternate+Art%29+%28OP06-042-AA%29&ed=OP-06&num=OP06-042-AA",
         },
     ]
+    gk = [
+        {
+            "name": "Gecko Moria (086) (OP06-086)",
+            "url": "https://www.ligaonepiece.com.br/?view=cards/card&card=Gecko+Moria+%28086%29+%28OP06-086%29&ed=OP-06&num=OP06-086",
+        }
+    ]
 
     for card in list_of_cards:
         driver = init_driver(card["url"])
@@ -42,5 +50,4 @@ if __name__ == "__main__":
             cropped_name=f"{slug_name}_price.png",
             crop_coordinates=PRICE_COORDINATES,
         )
-        download_card_image(driver, f"{slug_name}.png")
-
+        # download_card_image(driver, f"{slug_name}.png")
