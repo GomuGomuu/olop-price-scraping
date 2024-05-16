@@ -6,3 +6,5 @@ Flask~=3.0.3
 beautifulsoup4~=4.12.3
 pytesseract~=0.3.10
 redis~=5.0.4
+Flask-Caching~=2.3.0
+python-dotenv~=1.0.1

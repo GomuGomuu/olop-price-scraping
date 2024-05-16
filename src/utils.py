@@ -17,11 +17,11 @@ def slugify(s):
 
 
 def extract_float_value(string):
-    pattern = r"\d+(?:,\d+)?"
+    pattern = r"\d{1,3}(?:\.\d{3})*,\d{2}"
     match = re.search(pattern, string)
     if match:
         matched_number = match.group()
-        matched_number = matched_number.replace(",", ".")
+        matched_number = matched_number.replace(".", "").replace(",", ".")
         return float(matched_number)
     else:
         return None

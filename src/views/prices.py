@@ -1,6 +1,6 @@
 from flask import request, Response, json
 
-from app import app, cache, CACHE_CARD_PRICE_KEY, BASE_REDIS_EXPIRATION
+from app import app, CACHE_CARD_PRICE_KEY, BASE_REDIS_EXPIRATION, cache
 from src.services.get_price_workflow import get_price_workflow
 from src.utils import slugify, extract_float_value
 
@@ -22,10 +22,15 @@ def make_key(*args, **kwargs):
         return str(e)
 
 
+def check_forced_update():
+    return True if request.args.get("force") else False
+
+
 @app.route("/get_price", methods=["POST"])
 @cache.cached(
     timeout=BASE_REDIS_EXPIRATION,
     make_cache_key=make_key,
+    forced_update=check_forced_update,  # I don't know how to make this work AAAAAAAAAAAAAAAAA
 )
 def get_price():
     if request.method == "POST":
@@ -39,11 +44,10 @@ def get_price():
                         "The request payload is missing the card_name parameter",
                         status=400,
                     )
-
                 slug_name = slugify(card_name)
 
                 try:
-                    price = extract_float_value(get_price_workflow(url))
+                    price = extract_float_value(get_price_workflow(url, card_name))
                 except Exception as e:
                     app.logger.error(
                         f"Error while getting the price: {str(e)}, url: {url}, card_name: {card_name}"

@@ -11,9 +11,12 @@ REDIS_DB = os.getenv("REDIS_DB", 0)
 
 REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 
+DEBUG = os.getenv("DEBUG", False)
+SELENIUM_HOST = os.getenv("SELENIUM_HOST", "localhost")
+
 CACHE_CARD_PRICE_KEY = "card_price"
 BASE_REDIS_EXPIRATION = 60 * 60 * 24
-
+OCR_PATH = os.getenv("OCR_PATH", "/usr/bin/tesseract")
 config = {
     "CACHE_TYPE": "redis",
     "CACHE_REDIS_HOST": REDIS_HOST,
@@ -44,18 +47,8 @@ def make_key(*args, **kwargs):
     return ",".join([f"{key}={value}" for key, value in user_data.items()])
 
 
-@app.route("/")
-def index():
-    app.logger.info("This is an INFO message")
-    app.logger.debug("This is a DEBUG message")
-    app.logger.warning("This is a WARNING message")
-    app.logger.error("This is an ERROR message")
-    app.logger.critical("This is a CRITICAL message")
-    return "Hello, World!"
-
-
 if __name__ == "__main__":
-    app.run(reloader=True, debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
     # obj = {
     #     "url": "https://www.ligaonepiece.com.br/?view=cards/card&card=Kouzuki+Oden+%28OP01-031-PAR%29&ed=OP-01&num=OP01-031-PAR",  # noqa
     #     "card_name": "Kouzuki Oden (OP01-031-PAR)"
