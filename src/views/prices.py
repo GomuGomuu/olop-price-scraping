@@ -1,7 +1,8 @@
 from flask import request, Response, json
 
 from app import app, CACHE_CARD_PRICE_KEY, BASE_REDIS_EXPIRATION, cache
-from src.services.get_price_workflow import get_price_workflow
+from src.services.price_workflow import get_price_workflow
+
 from src.utils import slugify, extract_float_value
 
 

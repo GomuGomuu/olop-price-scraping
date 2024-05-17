@@ -13,6 +13,8 @@ REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 
 DEBUG = os.getenv("DEBUG", False)
 SELENIUM_HOST = os.getenv("SELENIUM_HOST", "localhost")
+SELENIUM_PORT = os.getenv("SELENIUM_PORT", 4444)
+SELENIUM_HOST_URL = f"http://{SELENIUM_HOST}:{SELENIUM_PORT}/wd/hub"
 
 CACHE_CARD_PRICE_KEY = "card_price"
 BASE_REDIS_EXPIRATION = 60 * 60 * 24
