@@ -4,7 +4,7 @@ services:
   redis-card-watcher:
     image: redis:7.0
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT_HOST}:6379"
     networks:
       - scraper
 
@@ -17,7 +17,7 @@ services:
       - selenium
     environment:
       - REDIS_HOST=redis-card-watcher
-      - REDIS_PORT=6379
+      - REDIS_PORT=${REDIS_PORT}
     volumes:
       - .:/app
     env_file:
@@ -33,7 +33,7 @@ services:
       - SE_NODE_MAX_SESSIONS=5
     networks:
       - scraper
-  
+
 volumes:
   flask-app:
 
