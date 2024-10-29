@@ -1,6 +1,8 @@
+import os
+
 from flask import request, Response, json
 
-from app import app, CACHE_CARD_PRICE_KEY, BASE_REDIS_EXPIRATION, cache
+from app import app, CACHE_CARD_PRICE_KEY
 from src.services.price_workflow import get_price_workflow
 
 from src.utils import slugify, extract_float_value
@@ -28,11 +30,6 @@ def check_forced_update():
 
 
 @app.route("/get_price", methods=["POST"])
-@cache.cached(
-    timeout=BASE_REDIS_EXPIRATION,
-    make_cache_key=make_key,
-    forced_update=check_forced_update,  # I don't know how to make this work AAAAAAAAAAAAAAAAA
-)
 def get_price():
     if request.method == "POST":
         if request.is_json:
@@ -48,8 +45,16 @@ def get_price():
                 slug_name = slugify(card_name)
 
                 try:
+                    print(f"Request received for {card_name}")
                     price = extract_float_value(get_price_workflow(url, card_name))
                 except Exception as e:
+                    if e.args[0] == "NoneType' object has no attribute 'quit'":
+                        # reboot the selenium docker container
+                        app.logger.error(
+                            "Selenium container is not running, restarting the container"
+                        )
+                        os.system("docker restart selenium")
+
                     app.logger.error(
                         f"Error while getting the price: {str(e)}, url: {url}, card_name: {card_name}"
                     )

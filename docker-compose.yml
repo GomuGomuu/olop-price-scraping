@@ -18,6 +18,8 @@ services:
     environment:
       - REDIS_HOST=redis-card-watcher
       - REDIS_PORT=${REDIS_PORT}
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
     volumes:
       - .:/app
     env_file:
@@ -33,9 +35,6 @@ services:
       - SE_NODE_MAX_SESSIONS=5
     networks:
       - scraper
-
-volumes:
-  flask-app:
 
 networks:
   scraper:

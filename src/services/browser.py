@@ -3,7 +3,13 @@ from src.constants import SELENIUM_BROWSER_DIMENSIONS
 
 
 class ChromeBrowser:
-    def __init__(self, driver=None, remote=False, remote_url=SELENIUM_HOST_URL, dimensions=SELENIUM_BROWSER_DIMENSIONS):
+    def __init__(
+        self,
+        driver=None,
+        remote=False,
+        remote_url=SELENIUM_HOST_URL,
+        dimensions=SELENIUM_BROWSER_DIMENSIONS,
+    ):
         self.driver = driver
         self.remote = remote
         self.remote_url = remote_url
